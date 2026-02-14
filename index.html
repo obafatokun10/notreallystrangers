@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>We're Not Really Strangers</title>
+    <title>We're Not Really Strangers - After Dark</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -37,53 +37,74 @@
         }
 
         .card-display {
-            min-height: 180px;
+            min-height: 250px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             padding: 20px;
             border: 2px solid #b71c1c;
             border-radius: 8px;
             position: relative;
             background: #fff;
+            transition: all 0.3s ease;
+        }
+
+        /* Styles for specific card types */
+        .card-display.wildcard {
+            border-color: #333;
+            background-color: #fafafa;
+        }
+        
+        .card-display.spicy {
+            border-color: #D81B60; /* Pinkish-Red */
+            background-color: #FFF0F5; /* Lavender Blush */
         }
 
         #category-label {
             position: absolute;
-            top: 10px;
+            top: 15px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #b71c1c;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            opacity: 0.7;
+            opacity: 0.6;
+            font-weight: bold;
         }
 
+        .wildcard #category-label { color: #333; }
+        .spicy #category-label { color: #D81B60; }
+
         #question-text {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: bold;
             line-height: 1.4;
+            padding: 0 10px;
+        }
+
+        #counter {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            font-size: 0.6rem;
+            color: #aaa;
         }
 
         .button-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
             margin-bottom: 15px;
-        }
-
-        .button-full {
-            width: 100%;
         }
 
         button {
             background-color: white;
             color: #b71c1c;
             border: 2px solid #b71c1c;
-            padding: 15px 10px;
+            padding: 10px;
             font-size: 0.9rem;
             font-weight: bold;
             border-radius: 30px;
@@ -91,6 +112,18 @@
             transition: all 0.2s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button small {
+            font-size: 0.65rem;
+            margin-top: 5px;
+            opacity: 0.8;
+            font-weight: normal;
         }
 
         button:hover {
@@ -98,21 +131,28 @@
             color: white;
         }
 
-        button:active {
-            transform: scale(0.98);
+        button:active { transform: scale(0.98); }
+
+        /* Wildcard Button Styling */
+        button.wildcard-btn {
+            border-color: #333;
+            color: #333;
+        }
+        button.wildcard-btn:hover {
+            background-color: #333;
+            color: white;
         }
 
-        /* Specific style for the Relationship button to make it stand out */
-        .btn-relationship {
-            background-color: #b71c1c;
-            color: white;
-            margin-top: 10px;
-            width: 100%;
+        /* Spicy Button Styling */
+        button.spicy-btn {
+            grid-column: span 2; /* Make it stretch across */
+            border-color: #D81B60;
+            color: #D81B60;
+            margin-top: 5px;
         }
-        
-        .btn-relationship:hover {
-            background-color: #8e0000;
-            border-color: #8e0000;
+        button.spicy-btn:hover {
+            background-color: #D81B60;
+            color: white;
         }
 
         .footer {
@@ -122,15 +162,11 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        
-        /* Mobile adjustment */
-        @media (max-width: 480px) {
-            .button-grid {
-                grid-template-columns: 1fr;
-            }
-            #question-text {
-                font-size: 1.3rem;
-            }
+
+        .empty-state {
+            color: #888;
+            font-style: italic;
+            font-size: 1.1rem;
         }
     </style>
 </head>
@@ -139,27 +175,44 @@
     <div class="container">
         <h1>We're Not Really Strangers</h1>
         
-        <div class="card-display">
+        <div class="card-display" id="card-display">
             <div id="category-label">Welcome</div>
             <div id="question-text">Select a level to begin.</div>
+            <div id="counter"></div>
         </div>
 
         <div class="button-grid">
-            <button onclick="ask('perception')">Level 1<br><small>Perception</small></button>
-            <button onclick="ask('connection')">Level 2<br><small>Connection</small></button>
-            <button onclick="ask('reflection')">Level 3<br><small>Reflection</small></button>
+            <button onclick="drawCard('perception')">
+                Level 1
+                <small>Perception</small>
+            </button>
+            <button onclick="drawCard('connection')">
+                Level 2
+                <small>Connection</small>
+            </button>
+            <button onclick="drawCard('reflection')">
+                Level 3
+                <small>Reflection</small>
+            </button>
+            <button class="wildcard-btn" onclick="drawCard('wildcard')">
+                Wildcard
+                <small>Action</small>
+            </button>
+            
+            <button class="spicy-btn" onclick="drawCard('spicy')">
+                Spicy Edition
+                <small>Intimacy & Heat (21+)</small>
+            </button>
         </div>
 
-        <button class="btn-relationship" onclick="ask('relationship')">Relationship Expansion</button>
-
-        <div class="footer">wnrs unofficial</div>
+        <div class="footer">Relationship & After Dark Edition</div>
     </div>
 
     <script>
-        // DATA BANK
-        const questions = {
+        // MASTER DATA BANK
+        const masterDeck = {
             perception: [
-                "What was your first impression of me?",
+                 "What was your first impression of me?",
                 "Do you think I was popular in high school?",
                 "What do you think my major is/was?",
                 "Do you think I've ever been in love?",
@@ -177,7 +230,88 @@
                 "Do you think I’m more emotional or logical?",
                 "What’s the worst assumption someone has made about you?",
                 "Do you think I’m a dog person or a cat person?",
-                "Do you think I intimidate others?"
+                "Do you think I intimidate others?",
+                "What does my Instagram tell you about me?",
+                "Do you think I am usually early, on time, or late to events?",
+                "What compliment do you think I hear the most?",
+                "Do I seem like someone who would get a name tattooed on myself?",
+                "What do you think is the hardest part of what I do for a living?",
+                "Between the two of us, who seems like the better texter?",
+                "What do you think I’m most likely to splurge on?",
+                "How many speeding tickets do you think I've gotten?",
+                "Do you think I ever checked an ex's phone for evidence?",
+                "Do I remind you of anyone you know?",
+                "What about me intrigues you besides my physical appearance?",
+                "Just by looking at me, what would you think I do for fun?",
+                "How many relationships do you think I’ve been in?",
+                "What is something you think I would never say no to?",
+                "Do you think I prefer hot cheetos or onion rings?",
+                "Do you think I’m the type to hold a grudge?",
+                "If I were a cocktail, what would I be?",
+                "Do you think I peaked in high school, college, or haven't yet?",
+                "Do I look like I have a good relationship with my parents?",
+                "What kind of drunk do you think I am?",
+                "Do you think I’m high maintenance?",
+                "Do I look like the type to ghost someone?",
+                "What do you think is my 'type'?",
+                "Do I seem like a rule follower or a rule breaker?",
+                "Do you think I cry easily?",
+                "What brand of clothing do you think I wear most?",
+                "Do you think I’m good with money?",
+                "If I were a character in a movie, would I be the hero, the villain, or the comic relief?",
+                "Do you think I’m religious/spiritual?",
+                "Do I look like I’ve ever been in a fistfight?",
+                "What subject do you think I failed in school?",
+                "Do you think I’m a good driver?",
+                "Do I seem like the jealous type?",
+                "Do you think I prefer big parties or small gatherings?",
+                "What do you think my biggest insecurity is, just by looking?",
+                "Do I seem like I have a strict skincare routine?",
+                "Do you think I’m an optimist or a pessimist?",
+                "What do you think I wanted to be when I grew up?",
+                "Do I seem like I’m good at keeping secrets?",
+                "Do you think I’m single, taken, or 'it's complicated'?",
+                "Do I look like I enjoy camping?",
+                "What genre of movie do you think is my favorite?",
+                "Do you think I’ve ever been arrested?",
+                "Do I seem like I check my horoscope?",
+                "Do you think I’m closer to my mom or my dad?",
+                "What’s one thing you’re hesitant to say to me?",
+                "Do I look like I own a lot of shoes?",
+                "Do you think I’m a good dancer?",
+                "Do I seem like I care what people think about me?",
+                "What do you think my coffee order is?",
+                "Do you think I’m confrontational?",
+                "Do I look like a city person or a nature person?",
+                "Do you think I’m currently happy?",
+                "Do I seem like the type to make the first move?",
+                "What do you think I do when I’m alone?",
+                "Do you think I’m a text person or a call person?",
+                "Do I look like I have a hidden talent?",
+                "What do you think my favorite season is?",
+                "Do you think I’m easily offended?",
+                "Do I seem like I have a lot of friends or a few close ones?",
+                "What car do you think matches my personality?",
+                "Do you think I’m political?",
+                "Do I look like I can cook a full meal?",
+                "Do you think I’ve ever dyed my hair a crazy color?",
+                "Do I seem like I read books?",
+                "What app do you think I use the most?",
+                "Do you think I’m romantic?",
+                "Do I look like I sleep with a stuffed animal?",
+                "Do you think I’m sarcastic?",
+                "What vibe does my posture give off?",
+                "Do I seem like I take good care of myself?",
+                "Do you think I’m stubborn?",
+                "Do I look like I like to travel?",
+                "What color do you associate with my aura?",
+                "Do you think I’m a risk-taker?",
+                "Do I seem like I’m in a rush?",
+                "Do you think I’m messy or organized?",
+                "Do I look like I’ve broken a bone?",
+                "What do you think my signature scent is?",
+                "Do you think I’m good at giving advice?",
+                "Do I seem like I’m happy to be here?"
             ],
             connection: [
                 "What is the last thing you lied to your mom about?",
@@ -198,7 +332,86 @@
                 "Who in your life do you feel you can be your most vulnerable self with?",
                 "What keeps you up at night?",
                 "What is something you are currently working through?",
-                "What is the best compliment you’ve ever received?"
+                "What is the best compliment you’ve ever received?",
+                "What is the most romantic thing I've done for you recently?",
+                "What song best describes our relationship?",
+                "What feelings are hard for you to communicate to me?",
+                "If you made a playlist for me, what 5 songs would be on it?",
+                "Is there an unforgettable story about you that I should know?",
+                "What’s your dream date night look like?",
+                "What is the last thing you lied about?",
+                "What have you been hiding all these years?",
+                "What is the worst pain you have ever been in?",
+                "What are you still trying to prove to yourself?",
+                "What would you feel best to fully accept in this current status?",
+                "When was the last time you felt lucky to be you?",
+                "What question are you trying to answer in your life right now?",
+                "What are you better at than most people you know?",
+                "Who do you want to talk to when you feel lonely?",
+                "What is your love language?",
+                "Has a stranger ever changed your life?",
+                "How do you like to be supported when you are going through a tough time?",
+                "Do you find it more difficult to apologize or to accept apologies?",
+                "If you could change one thing about yourself, what would it be?",
+                "What is one thing you’re insecure about?",
+                "Are there any insecurities from previous relationships that you carried into this one?",
+                "What made you fall in love with me?",
+                "When did you realize you were in love with me?",
+                "What is a non-negotiable in your life?",
+                "How has your view on love evolved over time?",
+                "What did the people who raised you teach you about love?",
+                "What are you feeling a lot of lately?",
+                "Have you ever considered an open relationship?",
+                "What is the most comforting thing I've done for you?",
+                "How many times do you think we've had a fight? Is it too much?",
+                "What is the biggest risk you've ever taken?",
+                "Who is the one person that got away?",
+                "What is a memory you wish you could erase?",
+                "What do you think happens after we die?",
+                "Have you ever broken someone's heart?",
+                "What is the cruelest thing you've ever done?",
+                "What is your definition of success?",
+                "Who do you secretly admire but haven't told?",
+                "What is a habit you’re trying to break?",
+                "When do you feel most alive?",
+                "What is the most trouble you've ever been in?",
+                "Who is the most toxic person you’ve cut out of your life?",
+                "What is something you feel guilty about?",
+                "If you could see your future, would you want to?",
+                "What is a dream you’ve given up on?",
+                "When did you last feel truly proud of yourself?",
+                "What is the most embarrassing thing that’s happened to you on a date?",
+                "What part of your childhood do you miss the most?",
+                "What is something you need to forgive yourself for?",
+                "Do you believe in soulmates?",
+                "What is the biggest misconception people have about you?",
+                "What makes you lose respect for someone immediately?",
+                "If you died tomorrow, what would you regret not doing?",
+                "What is something you’ve never told anyone?",
+                "How do you handle rejection?",
+                "What is the best advice you’ve ever ignored?",
+                "What do you look for in a best friend?",
+                "When was the last time you felt truly understood?",
+                "What is something you’re afraid to ask for?",
+                "What role does faith play in your life?",
+                "What is the most physically painful thing you've experienced?",
+                "Have you ever been in love with two people at once?",
+                "What is something small that makes your day better?",
+                "How do you deal with anger?",
+                "What is the longest you’ve gone without speaking to someone you love?",
+                "What is a quote that changed your life?",
+                "Who do you wish you were closer to?",
+                "What is something you’re currently procrastinating on?",
+                "When did you last feel completely helpless?",
+                "What is your biggest turn-off?",
+                "What is the kindest thing a stranger has done for you?",
+                "Do you think you are a good person?",
+                "What are you most grateful for right now?",
+                "What is a secret you’re keeping from your family?",
+                "What is the bravest thing you’ve ever done?",
+                "What does 'home' mean to you?",
+                "Are you happy with the path you are on?",
+                "What do you want to be remembered for?"
             ],
             reflection: [
                 "What do you think I should know about myself that perhaps I’m unaware of?",
@@ -216,55 +429,343 @@
                 "What about me is hardest for you to understand?",
                 "What do you think I need to hear right now?",
                 "How do you think our lives would be different if we hadn't met?",
-                "What is the most valuable lesson you've taken from this interaction?"
-            ],
-            relationship: [
-                "What was the first thing you noticed about me?",
-                "What assumption did you make about me that turned out to be false?",
-                "What is the most romantic thing I've done for you recently?",
-                "What song best describes our relationship?",
+                "What is the most valuable lesson you've taken from this interaction?",
                 "What about our relationship are you proudest of?",
                 "What is one small way I can be a better partner?",
                 "How does one earn your trust? Have I earned it?",
-                "What feelings are hard for you to communicate to me?",
-                "What is the hardest part about dating you?",
-                "If you made a playlist for me, what 5 songs would be on it?",
-                "What did you learn about yourself while playing this game?",
                 "What do you want to change in your personality right now?",
                 "Who do you want to say sorry or thank the most?",
                 "What is it about me that draws you in, beyond physical appearance?",
-                "Is there an unforgettable story about you that I should know?",
-                "What’s your dream date night look like?",
                 "What do you think my biggest weakness is?",
                 "What makes me stand out as a strong person?",
                 "What self-discovery have you noticed about me that I might not be aware of?",
-                "How do our personalities complement each other?"
+                "What do you think my superpower is?",
+                "Who do you think can be my right partner?",
+                "Where am I most qualified to give advice?",
+                "What question were you most afraid to answer?",
+                "What would be the perfect gift for me?",
+                "What part of yourself do you see in me?",
+                "Why do you think we met?",
+                "What do you think I fear the most?",
+                "What do you suggest I should let go of?",
+                "What is one part of your personality you do not use often?",
+                "What are you currently working through that others don't see?",
+                "What is your most toxic trait that you can admit to yourself?",
+                "How can we improve our sex life? (Skip if not applicable)",
+                "What fear do you think holds me back the most?",
+                "What goal would feel best for you to accomplish this year?",
+                "How can I support you in that goal?",
+                "What don't I give myself enough credit for?",
+                "What did this conversation teach you about our relationship?",
+                "What is the most important lesson a past relationship has taught you?",
+                "How would you describe me to a stranger?",
+                "What is one thing I do that makes you smile?",
+                "Do you think I see myself clearly?",
+                "What title would you give this chapter of our lives?",
+                "What is the biggest change you've seen in me since we met?",
+                "What do you think I’m most passionate about?",
+                "If we could go anywhere together right now, where should we go?",
+                "What is a song that reminds you of me?",
+                "What is one thing you would trust me with your life?",
+                "How do I handle stress compared to you?",
+                "What is the most important thing we agree on?",
+                "What is the most important thing we disagree on?",
+                "Do you feel safe with me?",
+                "What do you think I need more of in my life?",
+                "What do you think I need less of in my life?",
+                "If you could give me one ability/talent, what would it be?",
+                "What role do I play in your life?",
+                "How have I influenced you?",
+                "What is a memory of us that you cherish?",
+                "Do you think we will be in each other's lives in 10 years?",
+                "What is one thing you want to do with me before you die?",
+                "What do you think I look for in a friend?",
+                "Am I a good listener?",
+                "What is something I said that stuck with you?",
+                "How do we handle conflict together?",
+                "What is the best piece of advice I’ve given you?",
+                "Do you think I’m happy?",
+                "What color represents our connection?",
+                "If we started a business, what would it be?",
+                "What do you think is my spirit animal?",
+                "What is one question you still want to ask me?",
+                "How has this conversation changed your perception of me?",
+                "What is the most surprising thing about our dynamic?",
+                "Do you think we are more similar or different?",
+                "What is one word you would use to describe my energy?",
+                "What do you hope for me?",
+                "How can I love you better?",
+                "What barrier did we break today?",
+                "What is the weirdest thing about me?",
+                "Do you think I’m authentic?",
+                "What is one thing you’ve learned to accept about me?",
+                "What is a habit of mine you find annoying but endearing?",
+                "If you could thank me for one thing, what would it be?",
+                "What do you think I’m most proud of?",
+                "Do you think I’m living up to my potential?",
+                "What is the foundation of our bond?",
+                "How would you describe our chemistry?",
+                "What is the most beautiful thing about me?",
+                "What is one secret you think I have?",
+                "How do you think I show love?",
+                "What do you think is my biggest regret?",
+                "If you could buy me anything, what would it be?",
+                "What do you think I daydream about?",
+                "How do I make you feel?",
+                "What is the legacy of our relationship?"
+            ],
+            wildcard: [
+                "Staring Contest: First to blink loses.",
+                "Draw your current mood. Compare.",
+                "Write a note to your partner. Fold it and give it to them to open later.",
+                "Create your own question.",
+                "Ask and answer the next question in a different accent.",
+                "Write down the three most important things to you in a relationship (30 sec). Compare.",
+                "Based on what you learned, re-write each other's dating app bios.",
+                "Write down your number one goal for the next month.",
+                "Give each other a massage. Rock, paper, scissors to decide who goes first.",
+                "Swap phones for 1 minute. (Dare)",
+                "Sing the chorus of your favorite song.",
+                "Stand up and hug for 30 seconds without talking.",
+                "Admit something you've never told anyone.",
+                "Scroll through your camera roll and show the other person your favorite photo of yourself.",
+                "Look into each other's eyes for 60 seconds. No talking.",
+                "Take a selfie together right now.",
+                "Write down a title for this chapter of your life.",
+                "Draw one of your favorite memories with me. 30 seconds.",
+                "How do I show that I love you without telling you? Write it down.",
+                "Write down your intention for this relationship.",
+                "Close your eyes. What color is your mood right now?",
+                "Make up a secret handshake.",
+                "Dare: Text the last person you texted 'I miss you' (if appropriate) or send a random emoji.",
+                "Show the last photo in your camera roll. No explanations.",
+                "Play rock, paper, scissors. Loser reveals their screen time.",
+                "Draw a portrait of each other in 60 seconds. Show.",
+                "Find a song that matches your partner's vibe and play it.",
+                "Write a compliment on a piece of paper and trade.",
+                "Thumb war. Winner gets to ask a custom question.",
+                "Mimic your partner's laugh.",
+                "Show your partner the last thing you Googled.",
+                "Tell a joke. If they don't laugh, you have to answer a Level 2 question.",
+                "Both players close your eyes. Point to the person who is the better cook. Open.",
+                "Do 10 jumping jacks while answering: What is your favorite food?",
+                "Whisper a secret in your partner's ear.",
+                "Exchange one piece of jewelry/clothing for the rest of the game.",
+                "Arm wrestle.",
+                "Write down your partner's best quality. Reveal at the same time.",
+                "Sit back-to-back and ask each other 3 yes/no questions.",
+                "Hold hands for the next 3 questions.",
+                "Let your partner pick a new nickname for you. You must use it for 10 minutes.",
+                "Show the funniest meme you have saved on your phone.",
+                "Guess each other's battery percentage. Closest wins.",
+                "Speak in rhymes for the next 2 minutes.",
+                "Let your partner style your hair.",
+                "Send a voice note to a mutual friend saying 'I love you' with zero context.",
+                "Both players reveal their lock screen wallpaper.",
+                "Do your best impression of your partner.",
+                "Write a 5-word biography for your partner.",
+                "Play 'Two Truths and a Lie'.",
+                "Look through your partner's Spotify/Apple Music 'Recently Played'. Judge them.",
+                "Describe your partner using only emojis.",
+                "Try to make your partner smile in 10 seconds. No touching.",
+                "Reveal the content of your last received text message.",
+                "Slow dance to no music for 1 minute.",
+                "Guess your partner's favorite color. If wrong, buy them a snack later.",
+                "Take a hideous selfie of your partner. Keep it.",
+                "Rename your partner in your contacts to something they choose.",
+                "Let your partner post a status/story on your social media (keep it PG).",
+                "Feed your partner a snack/drink.",
+                "Both players empty their pockets/bags. Explain one item.",
+                "Write a prediction for your partner's future. Seal it in an envelope.",
+                "Meditate together for 1 minute.",
+                "Give your partner a piggyback ride.",
+                "Make up a rap about your partner.",
+                "Act out your favorite movie scene. Partner guesses.",
+                "Draw a tattoo you think your partner should get.",
+                "Read the last note you wrote in your Notes app.",
+                "Let your partner delete one photo from your phone (their choice).",
+                "Facetime a friend and sing 'Happy Birthday' to them (even if it's not their birthday).",
+                "Both players strike a pose. Hold it for 30 seconds.",
+                "Compliment battle: Go back and forth until someone runs out.",
+                "Guess what your partner is thinking right now.",
+                "Share your location with your partner for 1 hour.",
+                "Let your partner tickle you for 10 seconds.",
+                "Touch foreheads and breathe in sync for 1 minute.",
+                "Guess your partner's weight. (Risky!)",
+                "Show your partner your most used emoji.",
+                "Tell your partner one thing you've never liked about their style.",
+                "Let your partner send a text to your mom/dad.",
+                "Play 'Never Have I Ever' (3 rounds).",
+                "Guess your partner's dream vacation spot.",
+                "Make a pinky promise about something specific.",
+                "Air guitar solo. Partner rates it 1-10.",
+                "Show the oldest photo on your phone.",
+                "Write a haiku about your partner.",
+                "Switch seats.",
+                "Let your partner choose your next profile picture.",
+                "Confess a minor crime (jaywalking, stealing candy, etc.).",
+                "Do a plank for as long as you can while answering questions.",
+                "Give your partner a foot massage.",
+                "Guess the total cost of your partner's outfit.",
+                "Let your partner smell you. (Weird, but do it).",
+                "Show your hidden folder/deleted photos album.",
+                "Draw your partner's soul.",
+                "Blindfold yourself and try to touch your partner's nose.",
+                "Call a pizza place and ask for a 'boneless pizza'.",
+                "Let your partner draw on your arm with a pen.",
+                "End the game with a 1-minute hug."
+            ],
+            spicy: [
+                "Describe exactly how you want me to touch you right now.",
+                "What is a dirty thought you’ve had about me when we were in public?",
+                "If I handcuffed you to the bed, what are you secretly hoping I'd do first?",
+                "Recall the best orgasm I gave you. What exactly was I doing?",
+                "If I whispered 'beg for it' right now, what would you do?",
+                "What is one thing I haven't done to you yet that you are dying for me to try?",
+                "Imagine my hands are on you right now. Where are they?",
+                "What is the specific moment you wanted to rip my clothes off recently?",
+                "If we couldn't touch for a week, what sensation would you miss the most?",
+                "Tell me a fantasy where we get caught. Where are we?",
+                "Do you prefer I tease you until you can't take it, or take you immediately?",
+                "What specific sound do I make that turns you on instantly?",
+                "If I gave you complete control for 20 minutes, what are you doing to me?",
+                "What are you wearing underneath your clothes right now? Show me.",
+                "What is the dirtiest thing you’ve ever wanted to text me but didn’t?",
+                "Describe the feeling of my skin against yours in three words.",
+                "If you could have your way with me in any room of this house right now, which one would it be?",
+                "What is a dream you've had about me that you were too shy to tell me?",
+                "How loud do you think you’d be if I did exactly what you’re thinking of?",
+                "Do you like it when I leave marks on you? Where?",
+                "What is the sexiest thing I do when I don't know you're watching?",
+                "If I were to go down on you right now, how long would you last?",
+                "What is a scenario that plays in your head when you touch yourself?",
+                "Do you prefer to be tied up or to do the tying?",
+                "What is the one thing I do with my tongue that makes you weak?",
+                "Have you ever thought about me while being intimate with someone else (in the past)?",
+                "What is your favorite view of me?",
+                "If I woke you up in the middle of the night for sex, would you be into it?",
+                "What is a piece of clothing you want me to wear just so you can take it off?",
+                "Do you like being told what to do in bed?",
+                "What is the most sensitive part of your body that I neglect?",
+                "If we were at a boring party, what could I whisper to you to get you excited?",
+                "Do you like it when I watch you touch yourself?",
+                "What is the hottest thing you've ever imagined us doing?",
+                "Do you prefer slow, agonizing buildup or quick, intense passion?",
+                "What is a boundary you want us to push together?",
+                "If I blindfolded you, what is the first thing you'd want to feel?",
+                "What does my scent make you feel?",
+                "Have you ever looked at me and just wanted to take me right there? When?",
+                "What is the most embarrassing thing that turns you on?",
+                "If you could control my hands for 5 minutes, where would you put them?",
+                "Do you like it when I'm rough or gentle?",
+                "What is a question you've always wanted to ask me about my pleasure?",
+                "How does it feel when I kiss your neck?",
+                "What is the sexiest thing I could say to you right before we finish?",
+                "Do you like it when I deny you pleasure for a bit?",
+                "What is a roleplay scenario you've secretly thought about?",
+                "If we could film a tape, would you watch it?",
+                "What is the most sensitive spot on my body that you know of?",
+                "Do you like it when I make noise?",
+                "What is the hottest place we've ever had sex?",
+                "If I dared you to take off one item of clothing right now, what would it be?",
+                "What is a sensation (ice, feather, wax) you want to experiment with?",
+                "Do you like it when I pull your hair?",
+                "What is the most intense orgasm you've ever had with me?",
+                "If I told you to get on your knees right now, would you?",
+                "What is a fantasy involving food/something edible?",
+                "Do you like it when I talk dirty to you in public?",
+                "What is the one move that guarantees I get you in the mood?",
+                "If you could watch me do anything, what would it be?",
+                "Do you prefer morning wood or late-night desire?",
+                "What is the sexiest thing about my voice?",
+                "Have you ever had a sex dream about me before we started dating?",
+                "Do you like it when I bite?",
+                "What is a position we haven't tried in a while that you miss?",
+                "If I were to surprise you with lingerie/underwear, what color should it be?",
+                "What is the thrill of the risk vs. the comfort of the bed?",
+                "Do you like it when I take charge?",
+                "What is a compliment about your body you love hearing?",
+                "If you could have me anywhere in the world, where would it be?",
+                "What is the sexiest thing I’ve ever worn?",
+                "Do you like being edged?",
+                "What is a kink you’re curious about but haven't tried?",
+                "If I kissed you right now, would you stop me?",
+                "What is the most vulnerable you've felt during sex?",
+                "Do you like it when I look you in the eyes during the act?",
+                "What is a word that triggers you instantly?",
+                "If we had a mirror on the ceiling, would you look?",
+                "What is the best time of day for a quickie?",
+                "Do you like it when I tease you in front of others?",
+                "What is a memory of us that you use to get off?",
+                "If I asked you to strip for me, would you do it?",
+                "What is the feeling you get right before you climax?",
+                "Do you like it when I hold you down?",
+                "What is the one thing that makes you lose control?",
+                "If I could read your mind during sex, what would I hear?",
+                "What is the most unexpected thing that turns you on?",
+                "Do you like it when I use toys on you?",
+                "What is a forbidden place you want to do it?",
+                "If I offered you a massage that leads to more, would you take it?",
+                "What is the sexiest thing about our chemistry?",
+                "Do you like it when I scratch your back?",
+                "What is a fantasy you think is 'too much' but secretly want?",
+                "If I told you I wasn't wearing underwear, what would you do?",
+                "What is the feeling of my skin against yours?",
+                "Do you like it when I initiate in the morning?",
+                "What is a secret spot on your body that drives you crazy?",
+                "If I bit your lip right now, what would happen?",
+                "What is the hottest thing about seeing me in pleasure?",
+                "Do you like it when I guide your hands?",
+                "What is a sexual goal you have for us?"
             ]
         };
 
+        // State management
+        let availableCards = JSON.parse(JSON.stringify(masterDeck));
+
+        const display = document.getElementById('card-display');
         const questionText = document.getElementById('question-text');
         const categoryLabel = document.getElementById('category-label');
+        const counter = document.getElementById('counter');
 
-        function ask(category) {
-            // 1. Get the list of questions for the selected category
-            const list = questions[category];
+        function drawCard(category) {
+            // Check if cards are available in this category
+            if (availableCards[category].length === 0) {
+                questionText.innerHTML = "<span class='empty-state'>You've gone through all cards in this level!<br><br>Refresh the page to restart.</span>";
+                categoryLabel.textContent = "Complete";
+                counter.textContent = "0 left";
+                return;
+            }
 
-            // 2. Pick a random question
-            const randomQ = list[Math.floor(Math.random() * list.length)];
+            // Random selection
+            const randomIndex = Math.floor(Math.random() * availableCards[category].length);
+            const question = availableCards[category][randomIndex];
 
-            // 3. Update the UI
-            questionText.style.opacity = 0; // Fade out slightly
-            
+            // Remove the selected card so it doesn't repeat
+            availableCards[category].splice(randomIndex, 1);
+
+            // Update UI
+            display.classList.remove('wildcard', 'spicy');
+            questionText.style.opacity = 0;
+
             setTimeout(() => {
-                questionText.textContent = randomQ;
-                
-                // Update label based on category
-                if(category === 'perception') categoryLabel.textContent = "Level 1: Perception";
-                else if(category === 'connection') categoryLabel.textContent = "Level 2: Connection";
-                else if(category === 'reflection') categoryLabel.textContent = "Level 3: Reflection";
-                else categoryLabel.textContent = "Relationship Expansion";
+                if(category === 'wildcard') {
+                    display.classList.add('wildcard');
+                    categoryLabel.textContent = "Wildcard";
+                } else if(category === 'spicy') {
+                    display.classList.add('spicy');
+                    categoryLabel.textContent = "Spicy Edition";
+                } else if(category === 'perception') {
+                    categoryLabel.textContent = "Level 1: Perception";
+                } else if(category === 'connection') {
+                    categoryLabel.textContent = "Level 2: Connection";
+                } else {
+                    categoryLabel.textContent = "Level 3: Reflection";
+                }
 
-                questionText.style.opacity = 1; // Fade in
+                questionText.textContent = question;
+                counter.textContent = `${availableCards[category].length} cards left`;
+                questionText.style.opacity = 1;
             }, 200);
         }
     </script>
