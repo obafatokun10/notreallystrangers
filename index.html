@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>We're Not Really Strangers</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            border: 1px solid #e0e0e0;
+        }
+
+        h1 {
+            font-size: 1.2rem;
+            color: #b71c1c;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 40px;
+            font-weight: 700;
+        }
+
+        .card-display {
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 2px solid #b71c1c;
+            border-radius: 8px;
+            position: relative;
+            background: #fff;
+        }
+
+        #category-label {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: #b71c1c;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            opacity: 0.7;
+        }
+
+        #question-text {
+            font-size: 1.6rem;
+            font-weight: bold;
+            line-height: 1.4;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .button-full {
+            width: 100%;
+        }
+
+        button {
+            background-color: white;
+            color: #b71c1c;
+            border: 2px solid #b71c1c;
+            padding: 15px 10px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            background-color: #b71c1c;
+            color: white;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* Specific style for the Relationship button to make it stand out */
+        .btn-relationship {
+            background-color: #b71c1c;
+            color: white;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .btn-relationship:hover {
+            background-color: #8e0000;
+            border-color: #8e0000;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 0.7rem;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Mobile adjustment */
+        @media (max-width: 480px) {
+            .button-grid {
+                grid-template-columns: 1fr;
+            }
+            #question-text {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>We're Not Really Strangers</h1>
+        
+        <div class="card-display">
+            <div id="category-label">Welcome</div>
+            <div id="question-text">Select a level to begin.</div>
+        </div>
+
+        <div class="button-grid">
+            <button onclick="ask('perception')">Level 1<br><small>Perception</small></button>
+            <button onclick="ask('connection')">Level 2<br><small>Connection</small></button>
+            <button onclick="ask('reflection')">Level 3<br><small>Reflection</small></button>
+        </div>
+
+        <button class="btn-relationship" onclick="ask('relationship')">Relationship Expansion</button>
+
+        <div class="footer">wnrs unofficial</div>
+    </div>
+
+    <script>
+        // DATA BANK
+        const questions = {
+            perception: [
+                "What was your first impression of me?",
+                "Do you think I was popular in high school?",
+                "What do you think my major is/was?",
+                "Do you think I've ever been in love?",
+                "What do you think I do for a living?",
+                "Do you think I am an introvert or extrovert?",
+                "What reality show do you think I’m most likely to binge-watch?",
+                "Do you think I have a sibling? Older or younger?",
+                "Where do you think I grew up?",
+                "Do you think I’m a morning person or a night owl?",
+                "What kind of music do you think I listen to?",
+                "Do you think I’ve ever had my heart broken?",
+                "What is the first thing you noticed about me?",
+                "Do you think I like to cook or order out?",
+                "On a scale of 1-10, how messy do you think I am?",
+                "Do you think I’m more emotional or logical?",
+                "What’s the worst assumption someone has made about you?",
+                "Do you think I’m a dog person or a cat person?",
+                "Do you think I intimidate others?"
+            ],
+            connection: [
+                "What is the last thing you lied to your mom about?",
+                "What is your defining characteristic?",
+                "What is the hardest part about dating you?",
+                "What is the most pain you’ve ever been in (physical or emotional)?",
+                "If you could get to know someone in your life on a deeper level, who would it be and why?",
+                "What is your biggest fear?",
+                "What are you not being honest with yourself about?",
+                "What is the nicest thing you can remember doing for a friend?",
+                "When was the last time you cried?",
+                "What is something you wish you could say to the last person who hurt you?",
+                "What is a lesson you learned the hard way?",
+                "What part of your life do you feel most misunderstood in?",
+                "What is the most unexplainable thing that has ever happened to you?",
+                "If you could write a note to your younger self, what would you say?",
+                "What is something you wouldn't want your parents to know?",
+                "Who in your life do you feel you can be your most vulnerable self with?",
+                "What keeps you up at night?",
+                "What is something you are currently working through?",
+                "What is the best compliment you’ve ever received?"
+            ],
+            reflection: [
+                "What do you think I should know about myself that perhaps I’m unaware of?",
+                "What do you admire most about me?",
+                "In one word, how would you describe our conversation?",
+                "What did you learn about yourself while playing this game?",
+                "How do our personalities complement each other?",
+                "What do you think is my biggest strength?",
+                "What can we create together?",
+                "What answer of mine surprised you the most?",
+                "What do you think we have in common?",
+                "Based on what you learned about me, what would you recommend I read or watch?",
+                "What is one thing you think I can improve on?",
+                "If we were in a band, what would be our name?",
+                "What about me is hardest for you to understand?",
+                "What do you think I need to hear right now?",
+                "How do you think our lives would be different if we hadn't met?",
+                "What is the most valuable lesson you've taken from this interaction?"
+            ],
+            relationship: [
+                "What was the first thing you noticed about me?",
+                "What assumption did you make about me that turned out to be false?",
+                "What is the most romantic thing I've done for you recently?",
+                "What song best describes our relationship?",
+                "What about our relationship are you proudest of?",
+                "What is one small way I can be a better partner?",
+                "How does one earn your trust? Have I earned it?",
+                "What feelings are hard for you to communicate to me?",
+                "What is the hardest part about dating you?",
+                "If you made a playlist for me, what 5 songs would be on it?",
+                "What did you learn about yourself while playing this game?",
+                "What do you want to change in your personality right now?",
+                "Who do you want to say sorry or thank the most?",
+                "What is it about me that draws you in, beyond physical appearance?",
+                "Is there an unforgettable story about you that I should know?",
+                "What’s your dream date night look like?",
+                "What do you think my biggest weakness is?",
+                "What makes me stand out as a strong person?",
+                "What self-discovery have you noticed about me that I might not be aware of?",
+                "How do our personalities complement each other?"
+            ]
+        };
+
+        const questionText = document.getElementById('question-text');
+        const categoryLabel = document.getElementById('category-label');
+
+        function ask(category) {
+            // 1. Get the list of questions for the selected category
+            const list = questions[category];
+
+            // 2. Pick a random question
+            const randomQ = list[Math.floor(Math.random() * list.length)];
+
+            // 3. Update the UI
+            questionText.style.opacity = 0; // Fade out slightly
+            
+            setTimeout(() => {
+                questionText.textContent = randomQ;
+                
+                // Update label based on category
+                if(category === 'perception') categoryLabel.textContent = "Level 1: Perception";
+                else if(category === 'connection') categoryLabel.textContent = "Level 2: Connection";
+                else if(category === 'reflection') categoryLabel.textContent = "Level 3: Reflection";
+                else categoryLabel.textContent = "Relationship Expansion";
+
+                questionText.style.opacity = 1; // Fade in
+            }, 200);
+        }
+    </script>
+
+</body>
+</html>
